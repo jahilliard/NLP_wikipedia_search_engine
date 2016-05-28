@@ -27,14 +27,14 @@ def read_categories_to_load(file_name = 'category_list/category_list.csv'):
 		categories = ['Machine_learning', 'Business_software']
 	return categories
 
-def load_categories_from_wikipedia(categories = ['Machine_learning', 'Business_software']):
+def load_categories_from_wikipedia(categories = ['Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software', 'Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software']):
 	temp =[]
 	for category in categories:
 		page = requests.get("https://en.wikipedia.org/wiki/Category:" + category).text
-		doc = html.fromstring(page)
-		for page in doc.get_element_by_id("mw-pages").find_class("mw-category-group"):
-			temp.append([n[2] for n in page.iterlinks()])
-			print(temp)
+		# doc = html.fromstring(page)
+		# for page in doc.get_element_by_id("mw-pages").find_class("mw-category-group"):
+		# 	temp.append([n[2] for n in page.iterlinks()])
+	print("done")
 
 
 load_categories_from_wikipedia()
