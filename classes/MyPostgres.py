@@ -49,14 +49,7 @@ class MyPostgres:
 	# ie namedict = [{"first_name":"Joshua", "last_name":"Drake"},
 	#                {"first_name":"Steven", "last_name":"Foo"},
 	#                {"first_name":"David", "last_name":"Bar"}]
-	def preform_insert(self, statement, table, insert_items):
-		col_string = "("
-		val_string = "("
-		for key in insert_items:
-			val_string += "%(" + key + ")s, "
-			col_string += key + ", "
-		val_string = val_string[:-2] + ")"
-		col_string = col_string[:-2] + ")"
+	def perform_insert(self, table, insert_items, col_string, val_string):
 		try:
 			cur = self.conn.cursor()
 
@@ -65,15 +58,16 @@ class MyPostgres:
 			cur.close()
 			self.conn.commit()
 		except:
-			print("Cannot Insert items \n" + statement + "\n" + insert_items)
+			print("Cannot Insert items \n" + table + "\n" + insert_items)
 
 	# statement: SQL statement to preform
-	def preform_select(self, statement):
+	def preform_sql_fetch(self, statement):
 		try:
-			# turns what we return into a dictionary... ie print ("   ", row['notes'][1])
-			cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+			cur = self.conn.cursor()
 			cur.execute(statement)
+			self.conn.commit()
 			rows = cur.fetchall()
+			cur.close()
 			return rows
 		except:
 			print("Cannot Preform Select Statement " + statement)

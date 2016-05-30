@@ -34,16 +34,20 @@ def main_router(args):
 			print('\033[92m' + "	PASS:\033[94m Download Step pass\033[0m")
 		except:
 			print('\033[91m' + "	FAIL: Download Step fail\033[0m") 
-		try:
-			DB.drop_tables()
-			print('\033[92m' + "	PASS:\033[94m Drop DB tables pass\033[0m")
-		except:
-			print('\033[91m' + "	FAIL: DB Build fail\033[0m") 
-		try:
-			DB.close_connection()
-			print('\033[92m' + "	PASS:\033[94m Close DB connection pass\033[0m")
-		except:
-			print('\033[91m' + "	FAIL: Close DB connection fail\033[0m") 
+		# try:
+		# 	DB.drop_tables()
+		# 	print('\033[92m' + "	PASS:\033[94m Drop DB tables pass\033[0m")
+		# except:
+		# 	print('\033[91m' + "	FAIL: DB Build fail\033[0m") 
+		# try:
+		# 	DB.close_connection()
+		# 	print('\033[92m' + "	PASS:\033[94m Close DB connection pass\033[0m")
+		# except:
+		# 	print('\033[91m' + "	FAIL: Close DB connection fail\033[0m") 
+
+	elif args[1] == "/drop":
+		DB.drop_tables()
+
 		
 main_router(sys.argv)
 
