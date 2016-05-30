@@ -1,5 +1,6 @@
 import sys
 from controllers import mypostgres_controller as db
+from controllers import loader_controller as loader
 
 def main_router(args):
 	if args[1] == "/install":
