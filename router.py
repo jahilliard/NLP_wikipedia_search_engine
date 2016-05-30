@@ -4,7 +4,9 @@ from controllers import loader_controller as Loader
 
 def download(filename):
 	categories = Loader.read_categories_to_load(filename)
+	print(categories)
 	subcat = Loader.load_categories_from_wikipedia(categories)
+	print(subcat)
 
 def main_router(args):
 	if len(args) > 2:
