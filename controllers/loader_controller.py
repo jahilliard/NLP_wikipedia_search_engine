@@ -1,10 +1,16 @@
+# Probably should break this controller up, but time constrainsts...
+
 from lxml import html
 import csv
 import os.path
 import asyncio
 import aiohttp
+from classes import Category
+from classes import Subcategory
+from classes import Document
 
-file_name = 'category_list/category_list.csv'
+# Would need to refactor style to change this global... OK for current purposes
+subpage_categories = []
 
 def read_categories_to_load(file_name = 'category_list/category_list.csv'):
 	categories = []
@@ -42,11 +48,8 @@ def load_page_async(url, is_subpage = False):
 
 def manipulate_content(content):
 	doc = html.fromstring(content)
-	print("Hit content manipulate_content")
 	for page in doc.get_element_by_id("mw-pages").find_class("mw-category-group"):
 		subpage_categories.append([link_data[2] for link_data in page.iterlinks()])
-	# subpage_categories.append([item for sublist in subpage_categories_temp for item in sublist])
-
 
 
 # ['Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software', 'Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software']
@@ -60,9 +63,6 @@ def load_categories_from_wikipedia(categories = ['Machine_learning', 'Business_s
 		async_tasks.append(action_item)
 	loop.run_until_complete(asyncio.wait(async_tasks))
 	loop.close()
-	print(subpage_categories)
+	return subpage_categories
 
-categories = read_categories_to_load(file_name = 'category_list/category_list.csv')
-subpage_categories = []
 
-load_categories_from_wikipedia()
