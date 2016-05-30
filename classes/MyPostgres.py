@@ -9,33 +9,38 @@ class MyPostgres:
 		except:
 			print("Cannot Connect to DB")
 
-	def buid_db:
+	# builds database tables
+	# TODO: check to see if tables exist... eventually want to 
+	# 		build up db not just destroy everytime... LOL!!
+	def buid_db(self):
 		try:
 			cur = self.conn.cursor()
 			cur.execute('''CREATE TABLE CATEGORY
-				(ID INT SERIAL PRIMARY KEY     NOT NULL,
+				(ID SERIAL PRIMARY KEY     NOT NULL,
 					NAME           CHAR(250)    NOT NULL,
 					URL            CHAR(250)     NOT NULL);''')
 			cur.execute('''CREATE TABLE SUBCATEGORY
-				(ID INT SERIAL PRIMARY KEY     NOT NULL,
+				(ID SERIAL PRIMARY KEY     NOT NULL,
 					CATEGORY_ID    INT      references CATEGORY(ID) NOT NULL,
 					NAME           CHAR(250)    NOT NULL,
 					URL            CHAR(250)     NOT NULL);''')
 			cur.execute('''CREATE TABLE DOCUMENT
-				(ID INT SERIAL PRIMARY KEY     NOT NULL,
+				(ID SERIAL PRIMARY KEY     NOT NULL,
 					CATEGORY_ID    	  INT      references CATEGORY(ID) NOT NULL,
 					SUBCATEGORY_ID    INT      references SUBCATEGORY(ID) NOT NULL,
 					TITLE             CHAR(250)    NOT NULL,
 					DOC_TEXT          TEXT     NOT NULL,
 					DOC_TEXT_NO_STOP  TEXT     NOT NULL);''')
 			cur.execute('''CREATE TABLE SEARCHTERM
-				(ID INT SERIAL PRIMARY KEY     NOT NULL,
+				(ID SERIAL PRIMARY KEY     NOT NULL,
 					TERM           CHAR(500)    NOT NULL);''')
 			cur.execute('''CREATE TABLE CATEGORYTERM
-				(ID INT SERIAL PRIMARY KEY     NOT NULL,
+				(ID SERIAL PRIMARY KEY     NOT NULL,
 					DOCUMENT_ID    	  INT      references DOCUMENT(ID) NOT NULL,
 					SEARCH_TERM_ID    INT      references SEARCHTERM(ID) NOT NULL,
-					IDF_WEIGHT        REAL     NOT NULL,);''')
+					IDF_WEIGHT        REAL     NOT NULL);''')
+			cur.close()
+			self.conn.commit()
 		except:
 			print("Cannot build DB");
 	
@@ -44,7 +49,7 @@ class MyPostgres:
 	# ie namedict = [{"first_name":"Joshua", "last_name":"Drake"},
 	#                {"first_name":"Steven", "last_name":"Foo"},
 	#                {"first_name":"David", "last_name":"Bar"}]
-	def preform_insert(statement, table, insert_items):
+	def preform_insert(self, statement, table, insert_items):
 		col_string = "("
 		val_string = "("
 		for key in insert_items:
@@ -57,11 +62,13 @@ class MyPostgres:
 
 			cur.executemany("INSERT INTO " + table + col_string + " VALUES " + val_string + ";"
 				, insert_items)
+			cur.close()
+			self.conn.commit()
 		except:
 			print("Cannot Insert items \n" + statement + "\n" + insert_items)
 
 	# statement: SQL statement to preform
-	def preform_select(statement):
+	def preform_select(self, statement):
 		try:
 			# turns what we return into a dictionary... ie print ("   ", row['notes'][1])
 			cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -71,6 +78,18 @@ class MyPostgres:
 		except:
 			print("Cannot Preform Select Statement " + statement)
 
-	def close_connection:
-		self.conn.commit()
+	def drop_tables(self):
+		try:
+			cur = self.conn.cursor()
+			cur.execute('''DROP TABLE CATEGORYTERM CASCADE;''')
+			cur.execute('''DROP TABLE SEARCHTERM CASCADE;''')
+			cur.execute('''DROP TABLE DOCUMENT CASCADE;''')
+			cur.execute('''DROP TABLE SUBCATEGORY CASCADE;''')
+			cur.execute('''DROP TABLE CATEGORY CASCADE;''')
+			cur.close()
+			self.conn.commit()
+		except:
+			print("Cannot DROP tables from DB")
+
+	def close_connection(self):
 		self.conn.close()
