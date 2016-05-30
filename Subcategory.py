@@ -1,4 +1,4 @@
-class Subcategory(Category):
+class Subcategory(Object):
 
 	def __init__(self, url, category):
 		self.url = url
