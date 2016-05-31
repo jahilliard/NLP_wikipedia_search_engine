@@ -7,11 +7,11 @@ import asyncio
 import aiohttp
 import urllib
 from classes import Category as cat
-from classes import Subcategory as subcat 
-from classes import Document as doc
+from classes import Subcategory
+from classes import Document
 
-# Would need to refactor style to change this global... OK for current purposes
-return_content = []
+all_subcategorries = []
+all_docs = []
 
 def read_categories_to_load(file_name = 'category_list/category_list.csv'):
 	categories = []
@@ -45,7 +45,6 @@ def load_page_async(url, category = None, is_subpage = False):
 		with aiohttp.Timeout(10):
 			response = yield from session.get(urllib.parse.unquote(url))
 			if response.status == 200:
-				print(url)
 				content = yield from response.read()
 			else:
 				print(url + " does not exist")
@@ -61,14 +60,15 @@ def manipulate_content(content, category = None, is_subpage = False):
 	doc = html.fromstring(content)
 	if is_subpage == False:
 		for page in doc.get_element_by_id("mw-pages").find_class("mw-category-group"):
-			return_content.append([subcat.Subcategory(url = "https://en.wikipedia.org" + link_data[2],
+			all_subcategorries.append([Subcategory.Subcategory(url = "https://en.wikipedia.org" + link_data[2],
  														name =  link_data[2][6:].replace("_", " "),
  														category = category)
 										for link_data in page.iterlinks()])
 	else:
-		print(doc)
-		pass
-		# print(doc)
+		all_docs.append(Document.Document(subcategory = category, full_text = remove_tags(doc)))
+
+def remove_tags(doc):
+	return ''.join(doc.get_element_by_id("bodyContent").itertext())
 
 # ['Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software', 'Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software']
 def load_categories_from_wikipedia(categories, is_subpage = False):
@@ -83,6 +83,7 @@ def load_categories_from_wikipedia(categories, is_subpage = False):
 	loop.run_until_complete(asyncio.wait(async_tasks))
 	if is_subpage == True:
 		loop.close()
-	return return_content
+		return all_docs
+	return all_subcategorries
 
 

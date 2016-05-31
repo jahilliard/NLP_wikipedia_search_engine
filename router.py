@@ -7,8 +7,11 @@ def download(filename):
 	print(categories)
 	subcat = Loader.load_categories_from_wikipedia(categories)
 	subcat = [item for sublist in subcat for item in sublist]
-	print(subcat)
-	Loader.load_categories_from_wikipedia(subcat, is_subpage = True)
+	docs = Loader.load_categories_from_wikipedia(subcat, is_subpage = True)
+	print(docs[0].title)
+	print(docs[0].subcategory.id)
+	print(docs[0].subcategory.category.id)
+	print(docs[0].full_text)
 
 def main_router(args):
 	if len(args) > 2:
