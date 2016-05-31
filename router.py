@@ -36,12 +36,15 @@ def main_router(args):
 
 	elif args[1] == "/build":
 		build_test()
+		close_test()
 
 	elif args[1] == "/download":
 		download_test()
+		close_test()
 
 	elif args[1] == "/drop":
 		drop_test()
+		close_test()
 
 def drop_test():
 	try:
