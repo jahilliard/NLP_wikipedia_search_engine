@@ -10,8 +10,7 @@ class Category():
 	def __init__(self, name, url):
 		self.url = url 
 		self.name = name
-		self.store_category()
-		self.id = self.get_id()
+		self.check_if_exist(name = self.name)
 
 	def store_category(self):
 		DB.perform_insert(table = "Category", items = [{"name": self.name,
@@ -19,3 +18,11 @@ class Category():
 
 	def get_id(self):
 		return DB.perform_sql("Select ID from Category where name = '" + self.name +"';")[0][0]
+
+	def check_if_exist(self, name):
+		does_exist = DB.perform_sql("Select ID from Category where name = '" + self.name +"';")
+		if len(does_exist) > 0:
+			self.id = does_exist[0][0]
+		else:
+			self.store_category()
+			self.id = self.get_id()

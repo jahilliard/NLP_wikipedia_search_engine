@@ -11,7 +11,7 @@ from classes import Subcategory as subcat
 from classes import Document as doc
 
 # Would need to refactor style to change this global... OK for current purposes
-subpage_categories = []
+return_content = []
 
 def read_categories_to_load(file_name = 'category_list/category_list.csv'):
 	categories = []
@@ -39,38 +39,50 @@ def read_categories_to_load(file_name = 'category_list/category_list.csv'):
 
 @asyncio.coroutine
 def load_page_async(url, category = None, is_subpage = False):
+	exists = True
 	connector = aiohttp.TCPConnector(verify_ssl=False)
 	with aiohttp.ClientSession(connector=connector) as session:
 		with aiohttp.Timeout(10):
 			response = yield from session.get(urllib.parse.unquote(url))
-			assert response.status == 200
-			content = yield from response.read()
-	if is_subpage == False:
-		manipulate_content(content, category)
+			if response.status == 200:
+				print(url)
+				content = yield from response.read()
+			else:
+				print(url + " does not exist")
+				exists = False
+	if is_subpage == False and exists == True:
+		manipulate_content(content, category,  is_subpage = False)
+	elif is_subpage == True and exists == True:
+		manipulate_content(content, category,  is_subpage = True)
 	else:
-		print(content)
-	return 
+		pass
 
 def manipulate_content(content, category = None, is_subpage = False):
 	doc = html.fromstring(content)
 	if is_subpage == False:
 		for page in doc.get_element_by_id("mw-pages").find_class("mw-category-group"):
-			subpage_categories.append([subcat.Subcategory(url = "https://en.wikipedia.org" + link_data[2],
+			return_content.append([subcat.Subcategory(url = "https://en.wikipedia.org" + link_data[2],
  														name =  link_data[2][6:].replace("_", " "),
  														category = category)
 										for link_data in page.iterlinks()])
+	else:
+		print(doc)
+		pass
+		# print(doc)
 
 # ['Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software', 'Machine_learning', 'Business_software', 'Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software','Machine_learning', 'Business_software']
-def load_categories_from_wikipedia(categories):
+def load_categories_from_wikipedia(categories, is_subpage = False):
 	# async lib runs O(log(n))... requests is O(n)
 	# TODO: figure out how to load to async queue
 	async_tasks = []
 	loop = asyncio.get_event_loop()
-	for category in categories:
-		action_item = load_page_async(category.url, category)
+	for item in categories:
+		action_item = asyncio.ensure_future(load_page_async(url = item.url, 
+			category = item, is_subpage = is_subpage))
 		async_tasks.append(action_item)
 	loop.run_until_complete(asyncio.wait(async_tasks))
-	loop.close()
-	return subpage_categories
+	if is_subpage == True:
+		loop.close()
+	return return_content
 
 
