@@ -4,10 +4,10 @@ from controllers import loader_controller as Loader
 
 def download(filename):
 	categories = Loader.read_categories_to_load(filename)
-	print(categories)
 	subcat = Loader.load_categories_from_wikipedia(categories)
 	subcat = [item for sublist in subcat for item in sublist]
 	docs = Loader.load_categories_from_wikipedia(subcat, is_subpage = True)
+	return
 
 def main_router(args):
 	if len(args) > 2:

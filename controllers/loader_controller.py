@@ -77,10 +77,17 @@ def load_categories_from_wikipedia(categories, is_subpage = False):
 	async_tasks = []
 	loop = asyncio.get_event_loop()
 	for item in categories:
-		action_item = asyncio.ensure_future(load_page_async(url = item.url, 
-			category = item, is_subpage = is_subpage))
-		async_tasks.append(action_item)
-	loop.run_until_complete(asyncio.wait(async_tasks))
+		if is_subpage == False:
+			if not item.was_subcategory_queried():
+				action_item = asyncio.ensure_future(load_page_async(url = item.url, 
+					category = item, is_subpage = is_subpage))
+				async_tasks.append(action_item)
+		else:
+			action_item = asyncio.ensure_future(load_page_async(url = item.url, 
+				category = item, is_subpage = is_subpage))
+			async_tasks.append(action_item)
+	if len(async_tasks) > 0:
+		loop.run_until_complete(asyncio.wait(async_tasks))
 	if is_subpage == True:
 		loop.close()
 		return all_docs

@@ -11,7 +11,7 @@ class Subcategory():
 		self.url = url
 		self.name = name
 		self.category = category
-		self.check_if_exist(name = self.name)
+		self.__check_if_exist(name = self.name)
 
 
 	def store_category(self):
@@ -23,12 +23,13 @@ class Subcategory():
 		return DB.perform_sql("Select ID from Subcategory where name = '" 
 			+ self.name +"';")[0][0]
 
-	def check_if_exist(self, name):
+	def __check_if_exist(self, name):
 		does_exist = DB.perform_sql("Select ID from Subcategory where name = '"+ name +"';")
 		if len(does_exist) > 0:
 			self.id = does_exist[0][0]
 		else:
 			self.store_category()
 			self.id = self.get_id()
+
 
 
