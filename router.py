@@ -66,6 +66,7 @@ def build_test():
 def download_test():
 	try:
 		download(filename)
+		
 		print('\033[92m' + "	PASS:\033[94m Download Step pass\033[0m")
 	except:
 		print('\033[91m' + "	FAIL: Download Step fail\033[0m") 
