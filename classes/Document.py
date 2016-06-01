@@ -4,6 +4,12 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
 from controllers import mypostgres_controller as DB
+from nltk.corpus import stopwords
+import string
+
+# reiniting this var everytime is slow
+cachedStopWords = stopwords.words("english")
+remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
 
 class Document():
 
@@ -14,9 +20,11 @@ class Document():
 		self.check_if_exist()
 
 	def store_category(self):
+		self.full_text_no_stop = " ".join([i for i in self.full_text.split() if i not in cachedStopWords])
+		self.full_text_no_stop = self.full_text_no_stop.translate(remove_punctuation_map)
 		DB.perform_insert(table = "DOCUMENT", items = [{"title": self.title,
 														"DOC_TEXT": self.full_text,
-														"DOC_TEXT_NO_STOP": self.full_text,
+														"DOC_TEXT_NO_STOP": self.full_text_no_stop,
 														"CATEGORY_ID": self.subcategory.category.id,
 														"SUBCATEGORY_ID": self.subcategory.id}])
 
