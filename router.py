@@ -10,23 +10,31 @@ def download(filename):
 	return
 
 def main_router(args):
-	if len(args) > 2:
-		filename = args[2]
-	else:
-		filename = 'category_list/category_list.csv'
-
 	if args[1] == "/install":
+		if len(args) > 2:
+			filename = args[2]
+		else:
+			filename = 'category_list/category_list.csv'
 		print("install")
 		DB.build_db()
+		download(filename)
 		DB.close_connection()
 
 	elif args[1] == "/download":
-		download(filename)
+		if len(args) > 2:
+			filename = args[2]
+		else:
+			filename = 'category_list/category_list.csv'
+		download_test(filename)
 
 	# TESTS: really basic tests For Dev purposes 
 	elif args[1] == "/all_tests":
+		if len(args) > 2:
+			filename = args[2]
+		else:
+			filename = 'category_list/category_list.csv'
 		build_test() 
-		download_test()
+		download_test(filename)
 		drop_test()
 		close_test()
 
@@ -35,7 +43,11 @@ def main_router(args):
 		close_test()
 
 	elif args[1] == "/download":
-		download_test()
+		if len(args) > 2:
+			filename = args[2]
+		else:
+			filename = 'category_list/category_list.csv'
+		download_test(filename)
 		close_test()
 
 	elif args[1] == "/drop":
@@ -63,10 +75,9 @@ def build_test():
 	except:
 		print('\033[91m' + "	FAIL: DB Build fail\033[0m")
 
-def download_test():
+def download_test(filename):
 	try:
 		download(filename)
-		
 		print('\033[92m' + "	PASS:\033[94m Download Step pass\033[0m")
 	except:
 		print('\033[91m' + "	FAIL: Download Step fail\033[0m") 

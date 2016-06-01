@@ -20,7 +20,7 @@ def tfidf(word, blob, bloblist):
 	return tf(word, blob) * idf(word, bloblist)
 
 def calculate_tfidf_all_docs(list_of_docs):
-	bloblist = [tb(doc.full_text_no_stop) for doc in list_of_docs]
-	for blob in bloblist:
-		for word in blob.words:
-			
+	bloblist = [ tb(doc.full_text_no_stop) for doc in list_of_docs]
+	for index in range(len(bloblist)):
+		for word in bloblist[index].words:
+			tfidf(word, bloblist[index], bloblist)
