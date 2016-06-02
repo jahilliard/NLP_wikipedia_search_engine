@@ -1,15 +1,17 @@
 import sys
 from controllers import mypostgres_controller as DB
 from controllers import loader_controller as Loader
-from controllers import smart_search_controller as Searcher
+from controllers import model_trainer_controller as model_trainer
 
 def download(filename):
 	categories = Loader.read_categories_to_load(filename)
 	subcat = Loader.load_categories_from_wikipedia(categories)
 	subcat = [item for sublist in subcat for item in sublist]
 	docs = Loader.load_categories_from_wikipedia(subcat, is_subpage = True)
-	Searcher.calculate_tfidf_all_docs(docs)
+	model_trainer.calculate_tfidf_all_docs(docs)
 	return
+
+
 
 def main_router(args):
 	if args[1] == "/install":
@@ -39,6 +41,15 @@ def main_router(args):
 		download_test(filename)
 		drop_test()
 		close_test()
+
+	elif args[1] == "/search": 
+		search_terms = []
+		if len(args) > 2:
+			for search_term in args[2:]:
+				search_terms.append(search_term)
+		else:
+			return
+		
 
 	elif args[1] == "/build":
 		build_test()
