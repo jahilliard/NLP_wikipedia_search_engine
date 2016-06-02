@@ -2,6 +2,7 @@ import sys
 from controllers import mypostgres_controller as DB
 from controllers import loader_controller as Loader
 from controllers import model_trainer_controller as model_trainer
+from controllers import search_controller as search
 
 def download(filename):
 	categories = Loader.read_categories_to_load(filename)
@@ -47,8 +48,10 @@ def main_router(args):
 		if len(args) > 2:
 			for search_term in args[2:]:
 				search_terms.append(search_term)
+			search.read_terms(search_terms)
 		else:
 			return
+
 		
 
 	elif args[1] == "/build":
