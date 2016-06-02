@@ -1,5 +1,6 @@
 import math
 from textblob import TextBlob as tb
+from classes import SearchTerm
 
 pre_mapped_words = dict()
 
@@ -20,7 +21,14 @@ def tfidf(word, blob, bloblist):
 	return tf(word, blob) * idf(word, bloblist)
 
 def calculate_tfidf_all_docs(list_of_docs):
+	if len(list_of_docs) == 0:
+		return
 	bloblist = [ tb(doc.full_text_no_stop) for doc in list_of_docs]
 	for index in range(len(bloblist)):
+		words_checked = []
 		for word in bloblist[index].words:
-			tfidf(word, bloblist[index], bloblist)
+			if word not in words_checked:
+				SearchTerm.SearchTerm(tfidf = tfidf(word, bloblist[index], bloblist), 
+					word = word, document = list_of_docs[index])
+				words_checked.append(word)
+	return

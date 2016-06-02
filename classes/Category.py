@@ -17,10 +17,10 @@ class Category():
 														"url": self.url}])
 
 	def get_id(self):
-		return DB.perform_sql("Select ID from Category where name = '" + self.name +"';")[0][0]
+		return DB.perform_sql(str("Select ID from Category where name = '" + self.name +"';"))[0][0]
 
 	def __check_if_exist(self, name):
-		does_exist = DB.perform_sql("Select ID from Category where name = '" + name +"';")
+		does_exist = DB.perform_sql(str("Select ID from Category where name = '" + name +"';"))
 		if len(does_exist) > 0:
 			self.id = does_exist[0][0]
 		else:

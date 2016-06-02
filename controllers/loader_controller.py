@@ -42,7 +42,7 @@ def load_page_async(url, category = None, is_subpage = False):
 	exists = True
 	connector = aiohttp.TCPConnector(verify_ssl=False)
 	with aiohttp.ClientSession(connector=connector) as session:
-		with aiohttp.Timeout(10):
+		with aiohttp.Timeout(20):
 			response = yield from session.get(urllib.parse.unquote(url))
 			if response.status == 200:
 				content = yield from response.read()
@@ -76,6 +76,9 @@ def load_categories_from_wikipedia(categories, is_subpage = False):
 	# TODO: figure out how to load to async queue
 	async_tasks = []
 	loop = asyncio.get_event_loop()
+	if len(categories) == 0 and is_subpage == True:
+		loop.close()
+		return []
 	for item in categories:
 		if is_subpage == False:
 			if not item.was_subcategory_queried():

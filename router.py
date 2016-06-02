@@ -1,12 +1,14 @@
 import sys
 from controllers import mypostgres_controller as DB
 from controllers import loader_controller as Loader
+from controllers import smart_search_controller as Searcher
 
 def download(filename):
 	categories = Loader.read_categories_to_load(filename)
 	subcat = Loader.load_categories_from_wikipedia(categories)
 	subcat = [item for sublist in subcat for item in sublist]
 	docs = Loader.load_categories_from_wikipedia(subcat, is_subpage = True)
+	Searcher.calculate_tfidf_all_docs(docs)
 	return
 
 def main_router(args):

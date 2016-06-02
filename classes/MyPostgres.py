@@ -33,11 +33,8 @@ class MyPostgres:
 					DOC_TEXT_NO_STOP  TEXT     NOT NULL);''')
 			cur.execute('''CREATE TABLE SEARCHTERM
 				(ID SERIAL PRIMARY KEY     NOT NULL,
-					TERM           CHAR(500)    NOT NULL);''')
-			cur.execute('''CREATE TABLE CATEGORYTERM
-				(ID SERIAL PRIMARY KEY     NOT NULL,
+					TERM           CHAR(500)    NOT NULL,
 					DOCUMENT_ID    	  INT      references DOCUMENT(ID) NOT NULL,
-					SEARCH_TERM_ID    INT      references SEARCHTERM(ID) NOT NULL,
 					IDF_WEIGHT        REAL     NOT NULL);''')
 			cur.close()
 			self.conn.commit()
@@ -75,7 +72,6 @@ class MyPostgres:
 	def drop_tables(self):
 		try:
 			cur = self.conn.cursor()
-			cur.execute('''DROP TABLE CATEGORYTERM CASCADE;''')
 			cur.execute('''DROP TABLE SEARCHTERM CASCADE;''')
 			cur.execute('''DROP TABLE DOCUMENT CASCADE;''')
 			cur.execute('''DROP TABLE SUBCATEGORY CASCADE;''')

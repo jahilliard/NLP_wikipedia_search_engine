@@ -22,6 +22,7 @@ class Document():
 	def store_category(self):
 		self.full_text_no_stop = " ".join([i for i in self.full_text.split() if i not in cachedStopWords])
 		self.full_text_no_stop = self.full_text_no_stop.translate(remove_punctuation_map)
+		self.full_text_no_stop = self.full_text_no_stop.lower()
 		DB.perform_insert(table = "DOCUMENT", items = [{"title": self.title,
 														"DOC_TEXT": self.full_text,
 														"DOC_TEXT_NO_STOP": self.full_text_no_stop,
